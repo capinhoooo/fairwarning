@@ -1,0 +1,35 @@
+node_modules/
+.env
+.env.*
+!.env.example
+
+# NEAR (Cargo.lock stays tracked: cargo-near reproducible builds need it)
+contracts/near/target/
+tools/hashcheck/target/
+
+# Foundry; deps are installed from pinned tags, see contracts/base/README.md
+contracts/base/lib/
+contracts/base/out/
+contracts/base/cache/
+contracts/base/broadcast/
+
+# generated
+backend/prisma/generated/
+web/.output/
+web/.tanstack/
+web/dist/
+
+memory/
+# hackathon research notes, kept private
+research/
+.DS_Store
+# original Kwek Labs starters, kept locally only
+.starter-backup/
+**/.claude/agent-memory/
+# local-only: demo recording notes, agent and editor settings
+DEMO.md
+.claude/
+**/.claude/
+.vscode/
+**/.vscode/
+**/.mcp.json
