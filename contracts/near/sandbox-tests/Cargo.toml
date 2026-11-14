@@ -1,0 +1,15 @@
+[package]
+name = "sandbox-tests"
+version = "0.1.0"
+edition = "2021"
+publish = false
+[dev-dependencies]
+anyhow = "1"
+tokio = { version = "1", features = ["full"] }
+near-workspaces = { version = "0.23.0", features = ["unstable"] }
+near-sdk = { version = "=5.29.1", features = ["non-contract-usage"] }
+serde_json = "1"
+k256 = { version = "0.13", features = ["ecdsa"] }
+sha3 = "0.10"
+hex = "0.4"
+bs58 = "0.5"
