@@ -25,7 +25,7 @@ Fair Warning lets a DeFi team keep its instant admin key and still give deposito
 ![Tests](https://img.shields.io/badge/Tests-20_sandbox_·_9_Foundry_·_76_backend-2ea44f)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-**[Live testnet run](#the-full-lifecycle-step-by-step-with-a-real-example)** · **[Check it yourself](#try-it-in-two-minutes)** · **[Deployed contracts](#live-deployment)** · **[What is real](#what-is-real-vs-simulated)** · **[For AI reviewers](AGENTS.md)**
+**[Open the app](https://fairwarning-137.netlify.app)** · **[Live testnet run](#the-full-lifecycle-step-by-step-with-a-real-example)** · **[Check it yourself](#try-it-in-two-minutes)** · **[Deployed contracts](#live-deployment)** · **[What is real](#what-is-real-vs-simulated)** · **[For AI reviewers](AGENTS.md)**
 
 </div>
 
@@ -156,7 +156,8 @@ sequenceDiagram
 | Announcer (Base Sepolia) | [`0x1E4896b1042085921373aa7B136cE7C04803814f`](https://sepolia.basescan.org/address/0x1E4896b1042085921373aa7B136cE7C04803814f) |
 | Commitments | 0, 1, 2: breached and paid out. 3 and 4: covered, 2 USDC each, policing the same vault from Base block 57,491,651 |
 | Accounts | owner `fw-owner-7ab26a.testnet`, watcher `fw-watch-7ab26a.testnet` |
-| Web app and API | Run locally (below). No hosted deployment yet |
+| Web app (Netlify) | [fairwarning-137.netlify.app](https://fairwarning-137.netlify.app) |
+| API and watcher (Railway) | [backend-production-b21cab86.up.railway.app/fw/stats](https://backend-production-b21cab86.up.railway.app/fw/stats) |
 
 The testnet wasm was built with `cargo near build non-reproducible-wasm`. The reproducible build (`sourcescan/cargo-near:0.22.0-rust-1.97.1`, pinned by digest) is configured in `contracts/near/contract/Cargo.toml`; mainnet will use it.
 
@@ -337,7 +338,7 @@ The backend is a convenience, not a trust root. Anyone can call `report`, `defen
 | Honest upgrade and defence | **Live**, case 2 |
 | DemoVault and Announcer on Base Sepolia | **Live.** The vault is a demo vault we control, so we hold the admin key being policed |
 | Depositors | Two test wallets we control, with real testnet USDC deposits |
-| Watcher, case driver, payout runner | **Real**, run locally against testnet |
+| Watcher, case driver, payout runner | **Real**, hosted on Railway against testnet. Auto-report is off while the demo is recorded, so a human wallet reports first |
 | NEAR Intents payouts to Base and Solana | **Mainnet only.** On testnet: real dry-run quotes, payouts on NEAR |
 | Arbitrum, BNB, Polygon, Avalanche, HyperEVM, Abstract | **Supported and tested** (contract, encoder, watcher). The live run used Base Sepolia only |
 | Mainnet | **Not deployed** |
