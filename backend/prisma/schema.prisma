@@ -1,0 +1,176 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String   @id @default(cuid())
+  walletAddress String   @unique
+  nonce        String?   // For signature verification
+  nonceIssuedAt DateTime? // NEP-413 nonces expire; see authRoutes
+  lastSignIn   DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model ErrorLog {
+  id         String   @id @default(cuid())
+  errorCode  String
+  message    String
+  statusCode Int
+  stack      String?  @db.Text
+  context    String?  @db.Text
+  userId     String?
+  method     String?
+  path       String?
+  userAgent  String?  @db.Text
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([errorCode])
+  @@index([createdAt])
+}
+
+// ---- Fair Warning ----
+
+model Protocol {
+  id                   String   @id @default(cuid())
+  commitmentId         Int      @unique
+  slug                 String   @unique
+  name                 String
+  chain                String   @default("Base")
+  vaultAddress         String   // lowercase proxy address; watchedAddresses[0], kept for display
+  watchedAddresses     String[] @default([]) // lowercase 0x, all of params.watched; empty on rows registered before this column
+  watchedTopics        String[] @default([]) // lowercase 0x 32-byte topic0s, params.watched_topics
+  announcerAddress     String   // lowercase
+  ownerNearAccount     String
+  noticeBlocks         Int
+  maxAnnounceAgeBlocks Int
+  effectiveFromBlock   BigInt
+  finality             String   // Safe | Finalized
+  defenceWindow        Int      // NEAR blocks
+  bond                 String   @default("0") // USDC base units (u128 as string)
+  status               String   @default("Committed")
+  covered              Boolean  @default(false) // mirrors fw.is_covered: bonded, root set, no withdrawal pending
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  announcements Announcement[]
+  adminEvents   AdminEvent[]
+  cases         Case[]
+  roots         BeneficiaryRoot[]
+}
+
+model Announcement {
+  id          String   @id @default(cuid())
+  protocolId  String
+  protocol    Protocol @relation(fields: [protocolId], references: [id])
+  actionHash  String
+  expectedLog String
+  txHash      String
+  logIndex    Int
+  blockNumber BigInt
+  log         Json     // LogInput, exactly what fw.defend takes
+  createdAt   DateTime @default(now())
+
+  @@unique([txHash, logIndex])
+  @@index([protocolId, actionHash])
+}
+
+model AdminEvent {
+  id             String   @id @default(cuid())
+  protocolId     String
+  protocol       Protocol @relation(fields: [protocolId], references: [id])
+  topic0         String
+  txHash         String
+  logIndex       Int
+  blockNumber    BigInt
+  fingerprint    String
+  log            Json     // LogInput, exactly what fw.report takes
+  verdict        String   // announced | breach
+  announcementId String?
+  caseId         Int?
+  reportTxHash   String?
+  createdAt      DateTime @default(now())
+
+  // one row per bond that polices the log: each bond can open its own case on it
+  @@unique([protocolId, txHash, logIndex])
+  @@index([txHash, logIndex])
+  @@index([verdict, caseId])
+}
+
+model Case {
+  id            String   @id @default(cuid())
+  caseId        Int      @unique // fw case id
+  protocolId    String
+  protocol      Protocol @relation(fields: [protocolId], references: [id])
+  txHash        String
+  logIndex      Int
+  reporter      String
+  status        String   // Reported | DefenceOpen | Defended | Breached | Paid | Rejected | Moot
+  actionHash    String?
+  breachBlock   BigInt?
+  deadline      BigInt?  // NEAR block height
+  reward        String?
+  pool          String?
+  rewardPaid    Boolean  @default(false) // mirrors get_case.reward_paid
+  pendingDefences Int    @default(0) // mirrors get_case.pending_defences
+  defenceTxHash String?
+  finalizeTxHash String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  payouts Payout[]
+}
+
+model BeneficiaryRoot {
+  id            String   @id @default(cuid())
+  protocolId    String
+  protocol      Protocol @relation(fields: [protocolId], references: [id])
+  root          String
+  total         String
+  leafCount     Int
+  snapshotBlock BigInt
+  tree          Json     // StandardMerkleTree.dump()
+  createdAt     DateTime @default(now())
+
+  @@unique([protocolId, root])
+}
+
+model Payout {
+  id                 String   @id @default(cuid())
+  caseId             Int
+  case               Case     @relation(fields: [caseId], references: [caseId])
+  kind               String   // reward | depositor
+  baseAddress        String?
+  amount             String   // share paid out
+  leafAmount         String?  // depositor's merkle leaf amount; what fw.claim takes
+  payTo              String   // NEAR account or 1Click deposit address
+  route              String   // near | 1click
+  destinationAsset   String?
+  destinationAddress String?
+  signature          String?
+  proof              Json?
+  nearTxHash         String?
+  oneClickStatus     String?
+  status             String   @default("queued") // queued | submitted | paid | bridged | failed
+  error              String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@unique([caseId, kind, baseAddress])
+  @@index([status])
+}
+
+model Cursor {
+  id        String   @id // "base:<chainId>" | "near:<network>"
+  value     BigInt
+  updatedAt DateTime @updatedAt
+}
