@@ -1,6 +1,9 @@
 <div align="center">
 
-<img src="web/public/assets/images/logo.svg" alt="Fair Warning" width="120" />
+<picture>
+  <source media="(prefers-color-scheme: light)" srcset="web/public/brand/mark-light.png" />
+  <img src="web/public/brand/mark.png" alt="Fair Warning" height="160" />
+</picture>
 
 # Fair Warning
 
@@ -19,7 +22,7 @@ Fair Warning lets a DeFi team keep its instant admin key and still give deposito
 ![Bun](https://img.shields.io/badge/Backend-Bun_·_Fastify_5_·_Prisma_7-F9F1E1?logo=bun&logoColor=black)
 ![TanStack Start](https://img.shields.io/badge/Frontend-TanStack_Start-FF4154)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
-![Tests](https://img.shields.io/badge/Tests-14_sandbox_·_9_Foundry_·_33_backend-2ea44f)
+![Tests](https://img.shields.io/badge/Tests-20_sandbox_·_9_Foundry_·_76_backend-2ea44f)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 **[Live testnet run](#the-full-lifecycle-step-by-step-with-a-real-example)** · **[Check it yourself](#try-it-in-two-minutes)** · **[Deployed contracts](#live-deployment)** · **[What is real](#what-is-real-vs-simulated)** · **[For AI reviewers](AGENTS.md)**
@@ -203,13 +206,13 @@ Key files: `backend/src/routes/authRoutes.ts` · `web/src/lib/near/wallet.ts`
 
 | Path | What |
 |---|---|
-| `contracts/near/contract` | The `fw` contract: commitments, bonds, cases, MPC calls, payouts |
-| `contracts/near/sandbox-tests` | One near-workspaces test per security claim. 14 tests |
+| [`contracts/near`](contracts/near/README.md) `contract` | The `fw` contract: commitments, bonds, cases, MPC calls, payouts |
+| `contracts/near/sandbox-tests` | One near-workspaces test per security claim (16), plus 4 audit proof-of-concept tests |
 | `contracts/near/mock-signer`, `mock-ft` | Test doubles for `v1.signer` (same method and yield/resume, a known key) and USDC |
-| `contracts/base` | `Announcer`, `DemoVault` (UUPS), deploy and action scripts. 9 Foundry tests, including a 256-run fuzz test |
-| `backend` | Watcher, case driver, payout runner, REST API. 33 tests |
-| `web` | Landing page, vault index, vault page, report, case and bond flows |
-| `tools` | The MPC payload hash rebuilt in Python, TypeScript and Rust |
+| [`contracts/base`](contracts/base/README.md) | `Announcer`, `DemoVault` (UUPS), deploy and action scripts. 9 Foundry tests, including a 256-run fuzz test |
+| [`backend`](backend/README.md) | Watcher, case driver, payout runner, REST API. 76 tests |
+| [`web`](web/README.md) | Landing page, vault index, vault page, report, case and bond flows |
+| [`tools`](tools/README.md) | The MPC payload hash rebuilt in Python, TypeScript and Rust |
 | [`AGENTS.md`](AGENTS.md) | Commands, map and invariants for AI reviewers |
 
 ---
@@ -310,7 +313,7 @@ The backend is a convenience, not a trust root. Anyone can call `report`, `defen
 | An honest, announced change is never punished | sandbox `honest_upgrade_is_defended_and_reporter_bond_goes_to_defender`; live case 2 above |
 | Short notice, a different action or a stale announcement does not count as a defence | sandbox `defence_rules_notice_action_window` |
 | A signature for the same log on another chain cannot open a case | sandbox `the_commitment_chain_binds_the_mpc_answer` |
-| A decoy bond on the same vault cannot shield the real bond | sandbox `two_commitments_on_one_log_both_open_cases`; live cases 3 and 4 above |
+| A decoy bond on the same vault cannot shield the real bond | sandbox `two_commitments_on_one_log_both_open_cases` (in `audit_poc.rs`); live cases 3 and 4 above |
 | A false report cannot pay out; it times out and refunds | sandbox `wrong_claim_times_out_and_refunds` (real 200-block yield timeout) |
 | The bond cannot be withdrawn without notice or during a case | sandbox `bond_withdrawal_needs_notice_and_no_open_case` |
 | A pending withdrawal shows as not covered, and a breach just before it can still be reported | sandbox `withdrawal_waits_for_notice_plus_grace_and_ends_coverage` |
@@ -343,7 +346,7 @@ The backend is a convenience, not a trust root. Anyone can call `report`, `defen
 
 ## Security
 
-- One near-workspaces test per security claim (14), 9 Foundry tests with fuzzing, 33 backend tests. `cargo clippy -D warnings` is clean.
+- One near-workspaces test per security claim (16) plus 4 audit proof-of-concept tests, 9 Foundry tests with fuzzing, 76 backend tests. `cargo clippy -D warnings` is clean.
 - Contract hardening follows the [NEAR security checklist](https://docs.near.org/smart-contracts/security/checklist.md):
   - owner methods need exactly 1 yoctoNEAR;
   - reports pay a non-refundable 0.01 NEAR storage fee (559 bytes measured per full case);
@@ -376,7 +379,7 @@ NEAR HACKATHON (1 to 14 Nov 2026). Tracks: `defi`, `open`.
 | Project | Fair Warning |
 | Tracks | `defi` (Unstoppable DeFi), `open` (Open Innovation) |
 | Testnet contract | [`fw-fw-7ab26a.testnet`](https://testnet.nearblocks.io/address/fw-fw-7ab26a.testnet) |
-| Repository | Published before the deadline |
+| Repository | [github.com/capinhoooo/fairwarning](https://github.com/capinhoooo/fairwarning) |
 | Demo video | Published with the X post |
 
 ### What existed before, and what we used
@@ -385,7 +388,11 @@ NEAR HACKATHON (1 to 14 Nov 2026). Tracks: `defi`, `open`.
   - `backend/src/lib/fw`, `backend/src/workers` (except `errorLogCleanup.ts`), and `backend/src/routes` (except `exampleRoutes.ts`);
   - `web/src/lib`, `web/src/hooks`, the Fair Warning components and every page;
   - all of `contracts/` and `tools/`.
-- **Diff:** the tags `pre-hackathon` and `hackathon-submission` mark the baseline and the submission. The diff link is added here when the repository is published.
+- **Starter files, unchanged** (byte-for-byte, checked against the starters):
+  - `backend`: `src/utils/{errorHandler,miscUtils,timeUtils,validationUtils}.ts`, `src/middlewares/authMiddleware.ts`, `src/routes/exampleRoutes.ts`, `src/workers/{exampleWorkers,errorLogCleanup}.ts`, `dotenv.ts`, `prisma/prisma.config.ts` and the lint, format and TypeScript config;
+  - `web`: `src/router.tsx`, `src/env.ts`, `src/lib/polyfills.ts`, `src/utils/style.ts`, `src/integrations/tanstack-query/*`, `src/providers/{HeroUIProvider,ThemeProvider}.tsx`, `FRONTEND_STRUCTURE_GUIDE.md` and the lint, format and TypeScript config.
+  
+  Every other file was written or rewritten for this hackathon. The repository was published as one history on 14 Nov 2026.
 - **Libraries:** near-sdk, near-contract-standards, near-mpc-sdk, near-workspaces, OpenZeppelin Contracts and Contracts Upgradeable, forge-std, near-api-js, @hot-labs/near-connect, viem, @openzeppelin/merkle-tree, Fastify, Prisma, TanStack, GSAP, Lenis (versions in [the stack](#the-stack)).
 - **Other project:** some of us also built **Secret Shopper** (tracks `security`, `business`) at this hackathon. It is an independent project with its own repository and no shared code.
 
