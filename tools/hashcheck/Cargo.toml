@@ -1,0 +1,11 @@
+[package]
+name = "hashcheck"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+near-mpc-sdk = { git = "https://github.com/near/mpc", rev = "d0fc87b19e2643299e7becdd7d9611afcd5d5a78", features = ["non-contract-usage"] }
+hex = "0.4"
+borsh = "1"
+near-sdk = { version = "=5.29.1", features = ["non-contract-usage"] }
+serde_json = "1"
