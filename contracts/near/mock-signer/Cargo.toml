@@ -1,0 +1,10 @@
+[package]
+name = "mock-signer"
+version = "0.1.0"
+edition = "2021"
+[lib]
+crate-type = ["cdylib"]
+[dependencies]
+near-sdk = "=5.29.1"
+near-mpc-sdk = { git = "https://github.com/near/mpc", rev = "d0fc87b19e2643299e7becdd7d9611afcd5d5a78" }
+hex = "0.4"
