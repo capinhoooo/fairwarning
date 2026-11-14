@@ -37,7 +37,8 @@ export const config: AppConfig = {
   // Social links
   links: {
     twitter: '',
-    github: import.meta.env.VITE_GITHUB_URL ?? '',
+    github:
+      import.meta.env.VITE_GITHUB_URL || 'https://github.com/capinhoooo/fairwarning',
     telegram: '',
     discord: '',
     docs: '',
