@@ -21,6 +21,7 @@ html.dark {
   --fg-3: #5e5e5a;
   --light: #ffd9a0;
   --light-soft: rgba(255, 217, 160, 0.15);
+  --mark: #fdb57a;
   --cta-hi: #ffd9a0;
   --glint: #fff1d6;
   --grad-a: #ffffff;
@@ -47,6 +48,7 @@ html.light {
   --fg-3: #94959a;
   --light: #d4730c;
   --light-soft: rgba(212, 115, 12, 0.12);
+  --mark: #b45f08;
   --cta-hi: #b45f08;
   --glint: #ffb24a;
   --grad-a: #0b0b0c;
@@ -111,7 +113,9 @@ section { border-top: 1px solid var(--line); }
 .navbar { position: fixed; z-index: 20; top: calc(env(safe-area-inset-top, 0px) + 16px); left: 0; right: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); pointer-events: none; }
 .navpill { pointer-events: auto; max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 55%, transparent); border: 1px solid var(--line); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); }
 .logo { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; margin-right: 10px; white-space: nowrap; color: var(--fg); text-decoration: none; }
-.logo svg { width: 22px; height: 22px; }
+/* public/brand/mark.png is the trimmed logo (aspect 0.909); the mask keeps one asset for both themes */
+.logo-mark { display: inline-block; flex: none; height: 30px; aspect-ratio: 0.909; background: var(--mark);
+  -webkit-mask: url(/brand/mark.png) center / contain no-repeat; mask: url(/brand/mark.png) center / contain no-repeat; }
 .lnk { color: var(--fg-2); text-decoration: none; font-size: 14px; padding: 6px 10px; border-radius: 999px; transition: color .25s, background-color .25s; }
 .lnk:hover, .lnk[data-status="active"] { color: var(--fg); background: var(--glass-2); }
 .chips { display: flex; gap: 6px; margin-left: auto; }
@@ -163,6 +167,7 @@ section { border-top: 1px solid var(--line); }
 .mark .serif { font-size: 1.02em; letter-spacing: -.03em; }
 .foot-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr); gap: 48px; padding-block: 56px 48px; border-top: 1px solid var(--line); }
 .sign { display: grid; gap: 18px; align-content: start; justify-items: start; }
+.sign .logo-mark { height: clamp(64px, 6vw, 88px); margin-bottom: 4px; }
 .sign-l { font: 500 clamp(28px, 3.2vw, 42px)/1.05 var(--sans); letter-spacing: -.04em; }
 .status { display: inline-flex; align-items: center; gap: 9px; height: 32px; padding: 0 13px; border: 1px solid var(--line); border-radius: 999px; font: 500 12px var(--mono); color: var(--fg-2); }
 .status b { color: var(--fg); font-weight: 500; }

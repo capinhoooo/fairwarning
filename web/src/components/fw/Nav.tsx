@@ -7,16 +7,9 @@ import { scrollToTarget } from '@/lib/lenis'
 import { useTheme } from '@/providers/ThemeProvider'
 import { fmtInt, fmtUsdc, short } from '@/utils/fw'
 
-export const LogoMark = () => (
-  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-    <path
-      d="M12 3v4M7 21h10M9 21l1.4-11h3.2L15 21"
-      stroke="currentColor"
-      strokeWidth="1.4"
-      strokeLinejoin="round"
-    />
-    <path d="M14 7.5 22 5v5l-8-2.5Z" fill="var(--light)" />
-  </svg>
+/** The brand mark, painted through a mask so its color follows the theme's --mark token. */
+export const LogoMark = ({ className = '' }: { className?: string }) => (
+  <span className={`logo-mark ${className}`} aria-hidden="true" />
 )
 
 /** "How it works" lives on the landing page; from there it scrolls, from elsewhere it navigates. */

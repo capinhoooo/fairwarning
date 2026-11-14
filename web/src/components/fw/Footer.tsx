@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { Link } from '@tanstack/react-router'
+import { LogoMark } from '@/components/fw/Nav'
 import { useChainClock } from '@/hooks/useFw'
 import { scrollToTarget } from '@/lib/lenis'
 import { reducedMotion, registerGsap } from '@/lib/motion'
@@ -96,6 +97,7 @@ export default function Footer() {
       <div className="wrap">
         <div className="foot-grid">
           <div className="sign">
+            <LogoMark />
             <p className="sign-l">
               Give notice. <em className="serif">Or pay.</em>
             </p>
