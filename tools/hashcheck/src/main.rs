@@ -36,7 +36,7 @@ fn main() {
         .with_expected_log(5, l).with_domain_id(3u64).build().unwrap();
     println!("builder single-log Safe={}", hex::encode(args.expected_payload_hash.clone().unwrap().0));
     println!("request json={}", serde_json::to_string(&args).unwrap());
-    // same log, single-log Safe request, per chain: backend/test/mpcPayload.test.ts pins these
+    // same log, single-log Safe request, per chain: backend/test/fw.test.ts pins these
     use near_mpc_sdk::foreign_chain::ForeignChainRequestBuilder as B;
     macro_rules! per_chain {
         ($name:literal, $new:ident) => {{
