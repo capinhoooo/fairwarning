@@ -33,3 +33,6 @@ DEMO.md
 .vscode/
 **/.vscode/
 **/.mcp.json
+
+# Local Netlify folder
+.netlify
