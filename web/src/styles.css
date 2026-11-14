@@ -1,0 +1,201 @@
+@import "tailwindcss";
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource/instrument-serif/400-italic.css";
+@import "@fontsource-variable/jetbrains-mono";
+@import "./styles/landing.css";
+@import "./styles/app.css";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* One light source on true black. Every lit thing on every page uses --light. */
+:root,
+html.dark {
+  --bg: #000000;
+  --bg-2: #070707;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-2: rgba(255, 255, 255, 0.075);
+  --line: rgba(255, 255, 255, 0.11);
+  --line-2: rgba(255, 255, 255, 0.2);
+  --fg: #f2f2f0;
+  --fg-2: #9a9a96;
+  --fg-3: #5e5e5a;
+  --light: #ffd9a0;
+  --light-soft: rgba(255, 217, 160, 0.15);
+  --cta-hi: #ffd9a0;
+  --glint: #fff1d6;
+  --grad-a: #ffffff;
+  --grad-b: #b9bec7;
+  --grad-c: #ffd49a;
+  --ok: #5fd3a0;
+  --bad: #ff7a6b;
+  --grain: 0.055;
+  --sans: "Instrument Sans Variable", "Helvetica Neue", Arial, sans-serif;
+  --serif: "Instrument Serif", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono Variable", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+/* white text on the light-theme hover amber keeps 4.5:1 */
+html.light {
+  --bg: #fbfbfa;
+  --bg-2: #f2f2f0;
+  --glass: rgba(255, 255, 255, 0.72);
+  --glass-2: #ffffff;
+  --line: rgba(11, 11, 12, 0.08);
+  --line-2: rgba(11, 11, 12, 0.16);
+  --fg: #0b0b0c;
+  --fg-2: #56575c;
+  --fg-3: #94959a;
+  --light: #d4730c;
+  --light-soft: rgba(212, 115, 12, 0.12);
+  --cta-hi: #b45f08;
+  --glint: #ffb24a;
+  --grad-a: #0b0b0c;
+  --grad-b: #3b3d44;
+  --grad-c: #c9690a;
+  --ok: #0f8a5c;
+  --bad: #d23f2f;
+  --grain: 0.03;
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-3: var(--fg-3);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-light: var(--light);
+  --color-ok: var(--ok);
+  --color-bad: var(--bad);
+  --font-sans: var(--sans);
+  --font-serif: var(--serif);
+  --font-mono: var(--mono);
+}
+
+@layer components {
+/* Lenis: native scroll stays the source of truth, Lenis only smooths it */
+html.lenis,
+html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+body { margin: 0; overflow-x: clip; background: var(--bg); color: var(--fg); font: 400 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased; transition: background-color .6s, color .6s; }
+/* a real clip, unlike the propagated body one: focus can't scroll the page sideways to a lamp's cone */
+main { overflow-x: clip; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+::selection { background: var(--light); color: #0b0b0c; }
+:focus-visible { outline: 2px solid var(--light); outline-offset: 3px; border-radius: 10px; }
+
+/* film grain and a scroll progress line drawn in lamp light */
+.grain { position: fixed; inset: -50%; z-index: 50; pointer-events: none; opacity: var(--grain); animation: grain 1.2s steps(6) infinite;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+@keyframes grain { 0% { transform: translate(0, 0); } 20% { transform: translate(-3%, 2%); } 40% { transform: translate(2%, -3%); } 60% { transform: translate(-2%, -1%); } 80% { transform: translate(3%, 3%); } 100% { transform: translate(0, 0); } }
+.progress { position: fixed; top: env(safe-area-inset-top, 0px); left: 0; right: 0; height: 2px; z-index: 40; transform: scaleX(0); transform-origin: left; pointer-events: none;
+  background: linear-gradient(90deg, transparent, var(--light)); box-shadow: 0 0 10px var(--light); }
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.grad { background: linear-gradient(100deg, var(--grad-a) 0%, var(--grad-b) 55%, var(--grad-c) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.eyebrow { font: 500 11px/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--fg-2); }
+.br { font: 500 12px var(--mono); color: var(--fg-3); }
+/* one key phrase per heading in the serif italic */
+.serif { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -.015em; font-size: 1.06em; }
+h1, h2, h3, p { margin: 0; }
+h2 { font: 500 clamp(32px, 4.4vw, 60px)/1.02 var(--sans); letter-spacing: -.045em; margin-top: 16px; text-wrap: balance; }
+.sub { color: var(--fg-2); max-width: 30em; margin-top: 18px; }
+section { border-top: 1px solid var(--line); }
+
+/* glass nav */
+.navbar { position: fixed; z-index: 20; top: calc(env(safe-area-inset-top, 0px) + 16px); left: 0; right: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); pointer-events: none; }
+.navpill { pointer-events: auto; max-width: 1080px; margin: 0 auto; display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 16px; border-radius: 999px; background: color-mix(in srgb, var(--bg) 55%, transparent); border: 1px solid var(--line); backdrop-filter: blur(18px) saturate(1.4); -webkit-backdrop-filter: blur(18px) saturate(1.4); }
+.logo { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -.01em; margin-right: 10px; white-space: nowrap; color: var(--fg); text-decoration: none; }
+.logo svg { width: 22px; height: 22px; }
+.lnk { color: var(--fg-2); text-decoration: none; font-size: 14px; padding: 6px 10px; border-radius: 999px; transition: color .25s, background-color .25s; }
+.lnk:hover, .lnk[data-status="active"] { color: var(--fg); background: var(--glass-2); }
+.chips { display: flex; gap: 6px; margin-left: auto; }
+.chipx { display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line); font: 500 12px var(--mono); white-space: nowrap; color: var(--fg); text-decoration: none; }
+.chipx i { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); }
+.chipx i.off { background: var(--fg-3); box-shadow: none; }
+.ghost { height: 32px; min-width: 32px; padding: 0; display: inline-grid; place-items: center; border-radius: 999px; border: 1px solid var(--line); background: none; color: var(--fg); cursor: pointer; transition: border-color .25s, background-color .25s; }
+.ghost:hover { border-color: var(--fg-3); background: var(--glass-2); }
+.ghost svg { width: 15px; height: 15px; }
+.ghost.wide { padding: 0 12px; font: 500 12px var(--mono); }
+.menu-btn { display: none; }
+.menu { position: absolute; top: calc(100% + 8px); left: 0; right: 0; display: grid; gap: 2px; padding: 8px; border-radius: 22px; border: 1px solid var(--line); background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(18px); pointer-events: auto; }
+.menu a { padding: 12px 14px; border-radius: 14px; color: var(--fg); text-decoration: none; }
+.menu a:hover { background: var(--glass-2); }
+@media (max-width: 900px) { .navpill .lnk, .chips .hide-sm { display: none; } .menu-btn { display: inline-grid; } }
+@media (max-width: 540px) { .chips { display: none; } .navpill > .ml-auto-sm { margin-left: auto; } .navpill { padding-block: 6px; } .navpill > .cta { display: none; } }
+
+/* buttons, after Lusion and Morpho: flat pills, no glow. Hover rolls the label and swaps the arrow; press gives a 0.97 scale */
+.cta { --ease: cubic-bezier(.23, 1, .32, 1); display: inline-flex; align-items: center; gap: 12px; height: 42px; padding: 0 18px; border-radius: 999px; border: 1px solid var(--line-2); text-decoration: none; color: var(--fg); font: 500 14px var(--sans); background: transparent; cursor: pointer; white-space: nowrap;
+  transition: background-color .35s var(--ease), border-color .35s var(--ease), color .35s var(--ease), scale .16s ease-out; }
+.cta.solid { background: var(--fg); color: var(--bg); border-color: transparent; padding-right: 6px; }
+.cta.sm { height: 34px; padding: 0 14px; font-size: 13px; }
+.cta.sm.solid { padding-right: 4px; }
+.cta.sm .arw { width: 26px; height: 26px; }
+.cta:active { scale: .97; }
+.cta:disabled, .cta[aria-disabled="true"] { opacity: .4; cursor: not-allowed; scale: 1; }
+/* label roll: a text-shadow copy waits one line below and slides up into the mask */
+.roll { display: block; overflow: hidden; line-height: 1.5; height: 1.5em; }
+.roll > span { display: block; text-shadow: 0 1.5em currentColor; transition: transform .5s var(--ease); }
+/* arrow chip: the arrow leaves right while its copy enters from the left */
+.arw { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; overflow: hidden; background: var(--bg); color: var(--fg); font: 500 13px/1 var(--mono); font-style: normal; flex: none; }
+.arw > span { display: block; text-shadow: -2.2em 0 currentColor; transition: transform .5s var(--ease); }
+@media (hover: hover) and (pointer: fine) {
+  .cta:not(:disabled):hover .roll > span { transform: translateY(-1.5em); }
+  .cta:not(:disabled):hover .arw > span { transform: translateX(2.2em); }
+  .cta.solid:not(:disabled):hover { background: var(--cta-hi); }
+  .cta:not(.solid):not(:disabled):hover { background: var(--glass-2); border-color: var(--fg-3); }
+}
+@media (prefers-reduced-motion: reduce) { .roll > span, .arw > span { transition: none; } .cta:hover .roll > span, .cta:hover .arw > span { transform: none !important; } }
+
+/* footer: the lighthouse's name lies on the sea like its reflection */
+.foot { position: relative; overflow: hidden; padding-block: 0 24px; }
+.mark-wrap { text-align: center; padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); }
+/* inline-block so its width is the text's, which the fit script measures; the padding keeps descenders inside the reveal clip */
+.mark { display: inline-block; white-space: nowrap; font: 500 100px/.84 var(--sans); letter-spacing: -.055em; padding: .04em .02em .2em;
+  background-image: linear-gradient(90deg, transparent calc(var(--g2, -999px) - 180px), var(--glint) var(--g2, -999px), transparent calc(var(--g2, -999px) + 180px)),
+    linear-gradient(180deg, var(--fg) 0%, color-mix(in srgb, var(--fg) 40%, transparent) 55%, transparent 100%);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.mark .serif { font-size: 1.02em; letter-spacing: -.03em; }
+.foot-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 2fr); gap: 48px; padding-block: 56px 48px; border-top: 1px solid var(--line); }
+.sign { display: grid; gap: 18px; align-content: start; justify-items: start; }
+.sign-l { font: 500 clamp(28px, 3.2vw, 42px)/1.05 var(--sans); letter-spacing: -.04em; }
+.status { display: inline-flex; align-items: center; gap: 9px; height: 32px; padding: 0 13px; border: 1px solid var(--line); border-radius: 999px; font: 500 12px var(--mono); color: var(--fg-2); }
+.status b { color: var(--fg); font-weight: 500; }
+.status i { width: 6px; height: 6px; border-radius: 50%; background: var(--ok); box-shadow: 0 0 8px var(--ok); animation: beat 1.2s ease-in-out infinite; }
+@keyframes beat { 50% { opacity: .35; } }
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.cols > div { display: grid; gap: 12px; align-content: start; }
+.cols a, .cols .plain { color: var(--fg-2); text-decoration: none; font-size: 15px; width: fit-content; }
+.cols a { background: linear-gradient(var(--light), var(--light)) 0 100% / 0 1px no-repeat; transition: color .3s, background-size .45s cubic-bezier(.2, .8, .2, 1); }
+.cols a:hover { color: var(--fg); background-size: 100% 1px; }
+.cols .plain { color: var(--fg-3); }
+.legal { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-top: 22px; border-top: 1px solid var(--line); font: 500 11.5px var(--mono); letter-spacing: .06em; color: var(--fg-3); }
+.legal a, .legal button { color: var(--fg-2); text-decoration: none; background: none; border: 0; font: inherit; letter-spacing: inherit; cursor: pointer; padding: 0; }
+.legal a:hover, .legal button:hover { color: var(--fg); }
+@media (max-width: 860px) { .foot-grid { grid-template-columns: minmax(0, 1fr); gap: 36px; } }
+@media (max-width: 520px) { .cols { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* notice dial, shared by the landing page and every vault page */
+.dial-wrap { position: relative; aspect-ratio: 1; width: 100%; max-width: 620px; margin-left: auto; }
+.dial-wrap::before { content: ""; position: absolute; inset: 10%; border-radius: 50%; background: radial-gradient(circle, var(--light-soft), transparent 65%); filter: blur(34px); }
+.dial-wrap canvas { position: relative; width: 100%; height: 100%; display: block; }
+.readout { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; text-align: center; pointer-events: none; }
+.readout .big { font: 500 clamp(28px, 4vw, 52px)/1 var(--sans); letter-spacing: -.04em; display: flex; justify-content: center; margin-top: 12px; color: var(--fg); text-shadow: 0 0 28px var(--light-soft); }
+.readout .left { margin-top: 12px; }
+.odo { display: inline-block; height: 1em; overflow: hidden; vertical-align: top; }
+.odo span { display: block; transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+.odo i { display: block; height: 1em; font-style: normal; }
+.odometer .odo:last-child span { transition-duration: .12s; }
+.odometer .odo:nth-last-child(2) span { transition-duration: .3s; }
+.comma { width: .3em; }
+
+@media (prefers-reduced-motion: reduce) {
+  .status i, .grain { animation: none; }
+  .odo span { transition: none; }
+}
+}
