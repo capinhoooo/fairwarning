@@ -1,0 +1,11 @@
+{
+  "name": "fair-warning-tools",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "bun check_mainnet_vector.ts && python3 -I payload_hash.py"
+  },
+  "dependencies": {
+    "viem": "2.57.11"
+  }
+}
